@@ -1,11 +1,20 @@
 from collections import deque
 import uuid
+import sys
+import json
+
+from django import conf
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
     Allows the addition of new road/intersections (Edge/Vertex) and car objects on demand.
     """
-    def __init__(self) -> None:
+    def __init__(self, name) -> None:
+        print("USING: " + name + ".json as configuration file")
+        config_file = open(name + '.json')
+        config = json.load(config_file)
+        for edge in config["edges"]:
+            print(edge)
         pass
     def tick(self) -> None:
         pass
@@ -40,6 +49,4 @@ class Car():
         return self.id
 
 if __name__ == "__main__":
-    for i in range(10):
-        r = Road()
-        print(r.id)
+    NETWORK = Network(name = sys.argv[1])
