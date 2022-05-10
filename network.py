@@ -26,16 +26,20 @@ class Network():
         except:
             raise Exception("Malformed Config")
         for edge in config["edges"]:
-            self.create_edge()
+            self.create_edge(edge)
+
     def create_car(self):
         car = Car()
         self.cars[car.id] = car
-    def create_edge(self):
-        road = Road()
+
+    def create_edge(self, edge):
+        road = Road(edge["from"], edge["to"], lane_capacity= edge["capacity"])
         self.edges[road.id] = road
+
     def create_intersection(self):
         node = Intersection()
         self.nodes[node.id] = node
+
     def get_snapshot(self):
         return {"nodes": self.nodes, "edges": self.edges, "cars": self.cars}
     def tick(self) -> None:
@@ -50,10 +54,12 @@ class Road():
     Road can have multiple lanes. Each lane has the same fixed capacity
     """
     lanes = []
-    def __init__(self, lanes=1, lane_capacity=1) -> None:
+    def __init__(self,from_node, to_node, lanes=1, lane_capacity=1) -> None:
         for lane in range(lanes):
             self.lanes.append(deque([None] * lane_capacity))
-        self.id = "EDGE-" + str(uuid.uuid4())
+            self.id = "EDGE-" + str(uuid.uuid4)
+            self.from_node = from_node
+            self.to_node = to_node
         pass
     def add_car():
         # Check if we have a lane
