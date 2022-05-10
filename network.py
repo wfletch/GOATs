@@ -9,6 +9,9 @@ class Network():
     Global Network Object. Creates a graph from a supplied json file
     Allows the addition of new road/intersections (Edge/Vertex) and car objects on demand.
     """
+    edges = {}
+    nodes = {}
+    cars = {}
     def __init__(self, name) -> None:
         print("USING: " + name + ".json as configuration file")
         config = None
@@ -23,7 +26,18 @@ class Network():
         except:
             raise Exception("Malformed Config")
         for edge in config["edges"]:
-            print (edge)
+            self.create_edge()
+    def create_car(self):
+        car = Car()
+        self.cars[car.id] = car
+    def create_edge(self):
+        road = Road()
+        self.edges[road.id] = road
+    def create_intersection(self):
+        node = Intersection()
+        self.nodes[node.id] = node
+    def get_snapshot(self):
+        return {"nodes": self.nodes, "edges": self.edges, "cars": self.cars}
     def tick(self) -> None:
         pass
 class Intersection():
@@ -58,3 +72,4 @@ class Car():
 
 if __name__ == "__main__":
     NETWORK = Network(name = sys.argv[1])
+    print(NETWORK.get_snapshot())
