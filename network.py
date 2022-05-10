@@ -11,11 +11,19 @@ class Network():
     """
     def __init__(self, name) -> None:
         print("USING: " + name + ".json as configuration file")
-        config_file = open(name + '.json')
-        config = json.load(config_file)
+        config = None
+        config_file = None
+        try:
+            config_file = open(name + '.json')
+        except:
+            raise Exception("Config Not Found!")
+        try:
+            config = json.load(config_file)
+            config_file.close()
+        except:
+            raise Exception("Malformed Config")
         for edge in config["edges"]:
-            print(edge)
-        pass
+            print (edge)
     def tick(self) -> None:
         pass
 class Intersection():
