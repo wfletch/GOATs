@@ -1,4 +1,5 @@
 from collections import deque
+from enum import Enum
 import uuid
 import sys
 import json
@@ -65,7 +66,9 @@ class Road():
         # Check if we have a lane
         # Check if we have capacity -> Technically, we might need to have a NULL needed.
         pass
-
+class State(Enum):
+    TICK = 0
+    TOCK = 1
 class Car():
     """
     Create a car object.
@@ -73,6 +76,7 @@ class Car():
     """
     def __init__(self, occupancy=1) -> None:
         self.occupancy = occupancy
+        self.state = State.TICK
         self.id = "CAR-" + str(uuid.uuid4()) 
         return self.id
 
