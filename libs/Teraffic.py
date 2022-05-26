@@ -71,6 +71,25 @@ class Node():
                 continue
             car = edge.pop_car_waiting_to_leave()
             # REMEMBER if you can't place the car, you must return it to the edge
+            # Process
+            # 1. Figure out car's next target edge
+            # 2. Figure out if the target edge is valid, enabled, and has capacity
+            # 3. If so, move the car to the target edge.
+            #    If not, return the car to the edge it came from.
+            target_edge_id = car.get_next_edge()
+            target_edge = self.outbound_edges_id_to_edge(target_edge_id)
+            if target_edge == None:
+                raise Exception("Invalid Edge Selected! PANIC!")
+            if target_edge.is_active() and target_edge.has_space_for_new_car():
+                target_edge.add_new_car(car)
+            else:
+                edge.return_car_to_head(car)
+                continue
+        # TODO: Think long and hard about tick order
+        edge.tick()
+
+
+
             
 
 class Edge():
@@ -85,7 +104,7 @@ class Edge():
         self.activated = True
     def deactivate(self):
         self.activated = True
-    def is_actve(self):
+    def is_active(self):
         return self.activated
     def get_to_node(self):
         return self.to_node
