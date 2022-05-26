@@ -1,6 +1,5 @@
 import json
 from collections import defaultdict
-from re import I
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
