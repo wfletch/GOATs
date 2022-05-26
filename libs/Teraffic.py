@@ -18,7 +18,7 @@ class Network():
         config = None
         config_file = None
         try:
-            config_file = open(name + '.json')
+            config_file = open('./config/' + name + '.json')
         except:
             raise Exception("Config Not Found!")
         try:
