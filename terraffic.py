@@ -19,6 +19,7 @@ if __name__ == "__main__":
             ticks = 1
         for _ in range(ticks):
             network.tick()
+            print(network.get_system_overview())
     elif mode == "manual":
         while True:
             user_input = input("Continue? (Y/N):\t")

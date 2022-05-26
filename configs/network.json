@@ -15,21 +15,25 @@
     ],
     "edges": [
         {
+            "id": 1,
             "from": 0,
             "to": 1,
             "capacity": 5
         },
         {
+            "id": 2,
             "from": 1,
             "to": 2,
             "capacity": 5
         },
         {
+            "id": 3,
             "from": 2,
             "to": 3,
             "capacity": 5
         },
         {
+            "id":4,
             "from": 1,
             "to": 3,
             "capacity": 3
@@ -37,13 +41,15 @@
     ],
     "cars": [
         {
-            "start_edge": 0,
-            "start_position": 0,
+            "id" : 1,
+            "start_edge": 1,
+            "start_position": 1,
             "fungible_start_edge": false,
             "fungible_start_position": false,
-            "end_edge": 1,
+            "end_edge": 3,
             "end_position": 1,
-            "fungible_end_position" : 0
+            "fungible_end_position" : 0,
+            "path": [2,3]
         }
     ]
 }
