@@ -134,7 +134,7 @@ class Edge():
         self.incoming_car = car
     def has_car_waiting_to_leave(self):
         return self.queue[-1] != None
-    def pop_car_waiting_leave(self):
+    def pop_car_waiting_to_leave(self):
         car = self.queue[-1]
         self.queue[-1] = None
         return car
