@@ -1,7 +1,6 @@
 import json
 from collections import defaultdict
 import random
-import re
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
@@ -108,13 +107,8 @@ class Node():
                     target_edge.add_new_car(car)
                 else:
                     edge.return_car_to_head(car)
-                # TODO: Think long and hard about tick order
             completed_count += edge.tick()
         return completed_count
-
-
-
-            
 
 class Edge():
     def __init__(self, edge_id, from_node, to_node, capacity=2):
@@ -183,7 +177,6 @@ class Edge():
         else:
             # Well, we don't have any space it seems.
             print("No Space!")
-            pass
         # TODO: Check if a car has moved into it's required position!
         for i, car in enumerate(self.queue):
             if car != None and self.id == car.end_edge and i == car.end_position:
