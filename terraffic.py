@@ -26,6 +26,7 @@ if __name__ == "__main__":
                 break
             if user_input.upper() == "Y":
                 network.tick()
+                print(network.get_system_overview())
             else:
                 continue
 

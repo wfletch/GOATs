@@ -61,6 +61,7 @@ class Network():
         # 1. Get State of system
         # 2. Save as output json
     def get_system_overview(self):
+        return { "Tick" : self.tick_count}
         pass
 class Node():
     def __init__(self, id):
