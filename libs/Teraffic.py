@@ -1,10 +1,5 @@
-from collections import deque
-from enum import Enum
-import uuid
-import sys
 import json
 
-from django import conf
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
@@ -18,7 +13,8 @@ class Network():
         config = None
         config_file = None
         try:
-            config_file = open('./config/' + name + '.json')
+            config_file = open('./configs/' + name + '.json')
+            # TODO: Fully qualified name of the file we are loading. Not relative paths.
         except:
             raise Exception("Config Not Found!")
         try:
@@ -28,58 +24,24 @@ class Network():
             raise Exception("Malformed Config")
         for edge in config["edges"]:
             self.create_edge(edge)
-
-    def create_car(self):
-        car = Car()
-        self.cars[car.id] = car
-
-    def create_edge(self, edge):
-        road = Road(edge["from"], edge["to"], lane_capacity= edge["capacity"])
-        self.edges[road.id] = road
-
-    def create_intersection(self):
-        node = Intersection()
-        self.nodes[node.id] = node
-
-    def get_snapshot(self):
-        return {"nodes": self.nodes, "edges": self.edges, "cars": self.cars}
-    def tick(self) -> None:
-        pass
-class Intersection():
-    def __init__(self) -> None:
-        pass
+        # Build Each Node
+        # Build Each Edge
+class Node():
+    def __init__(self, id):
+        self.inbound_edges_id_to_edge = Collections.defa
+        self.outbound_edges = []
+        self.id = id
     pass
-class Road():
-    """
-    Create a one directional Road (Graph Edge)
-    Road can have multiple lanes. Each lane has the same fixed capacity
-    """
-    lanes = []
-    def __init__(self,from_node, to_node, lanes=1, lane_capacity=1) -> None:
-        for lane in range(lanes):
-            self.lanes.append(deque([None] * lane_capacity))
-            self.id = "EDGE-" + str(uuid.uuid4)
-            self.from_node = from_node
-            self.to_node = to_node
+class Edge():
+    def __init__(self, id, from_node, to_node, capacity):
+        self.id = id
+        self.from_node = from_node
+        self.to_node = to_node
+        self.queue = [None] * capacity
+        self.incoming_car = None
+    def __len__(self):
+        return len(self.queue)
+    def tick(self):
         pass
-    def add_car():
-        # Check if we have a lane
-        # Check if we have capacity -> Technically, we might need to have a NULL needed.
-        pass
-class State(Enum):
-    TICK = 0
-    TOCK = 1
 class Car():
-    """
-    Create a car object.
-    A car object fills up one (or more) slots of a lane capacity
-    """
-    def __init__(self, occupancy=1) -> None:
-        self.occupancy = occupancy
-        self.state = State.TICK
-        self.id = "CAR-" + str(uuid.uuid4()) 
-        return self.id
-
-if __name__ == "__main__":
-    NETWORK = Network(name = sys.argv[1])
-    print(NETWORK.get_snapshot())
+    pass
