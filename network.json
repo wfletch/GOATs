@@ -28,12 +28,17 @@
             "from": 2,
             "to": 3,
             "capacity": 5
+        },
+        {
+            "from": 1,
+            "to": 3,
+            "capacity": 3
         }
     ],
     "cars": [
-        {},
-        {},
-        {},
-        {}
+        {
+            "start": 0,
+            "end": 1
+        }
     ]
 }
