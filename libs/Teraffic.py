@@ -10,6 +10,7 @@ class Network():
         self.edges = defaultdict(lambda: None)
         self.nodes = defaultdict(lambda: None)
         self.cars = defaultdict(lambda: None)
+        self.tick_count = 0
         print("USING: " + name + ".json as configuration file")
         config = None
         config_file = None
@@ -47,6 +48,7 @@ class Network():
         print("Network Created")
     
     def tick(self):
+        self.tick_count +=1
         order = list(self.nodes.keys())
         random.shuffle(order)
         for node_id in order:
@@ -58,6 +60,8 @@ class Network():
         #TODO: Create Snapshot
         # 1. Get State of system
         # 2. Save as output json
+    def get_system_overview(self):
+        pass
 class Node():
     def __init__(self, id):
         self.inbound_edges_id_to_edge = defaultdict(lambda: None)
