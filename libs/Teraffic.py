@@ -1,6 +1,8 @@
 import json
 from collections import defaultdict
+from ossaudiodev import control_names
 import queue
+import random
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
@@ -58,6 +60,19 @@ class Node():
         self.inbound_edges_id_to_edge[edge.get_ID()] = edge
     def add_outbound(self, edge):
         self.outbound_edges_id_to_edge[edge.get_ID()] = edge
+    def tick(self):
+        order = self.inbound_edges_id_to_edge.keys()
+        random.shuffle(order)
+        for edge_id in order:
+            edge = self.inbound_edges_id_to_edge[edge_id]
+            if not edge.is_active():
+                continue
+            if not edge.has_car_waiting_to_leave():
+                continue
+            car = edge.pop_car_waiting_to_leave()
+            # REMEMBER if you can't place the car, you must return it to the edge
+            
+
 class Edge():
     def __init__(self, from_node, to_node, capacity=2):
         self.id = id
@@ -65,6 +80,13 @@ class Edge():
         self.to_node = to_node
         self.queue = [None] * capacity
         self.incoming_car = None
+        self.activated = True
+    def activate(self):
+        self.activated = True
+    def deactivate(self):
+        self.activated = True
+    def is_actve(self):
+        return self.activated
     def get_to_node(self):
         return self.to_node
     def get_from_node(self):
@@ -80,9 +102,21 @@ class Edge():
     def has_car_waiting_to_leave(self):
         return self.queue[-1] != None
     def pop_car_waiting_leave(self):
-        car = queue[-1]
-        queue[-1] = None
+        car = self.queue[-1]
+        self.queue[-1] = None
         return car
+    def return_car_to_head(self,car):
+        self.place_car_at_point(car, len(self)-1, force=True)
+    def place_car_at_point(self, location, car, force=False):
+        if location > len(self):
+            return False
+        if self.queue[location] != None:
+            if force:
+                self.queue[location] = car
+            else:
+                return False
+        return True
+
     def tick(self):
         # Find first instance of a None from the reverse.
         located_index = None
