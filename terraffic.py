@@ -4,7 +4,7 @@ if __name__ == "__main__":
     print("Teraffic Network Simulation")
     name = sys.argv[1]
     mode = sys.argv[2]
-    enabled_modes = ["manual", "auto"]
+    enabled_modes = ["manual", "auto", "timer"]
     mode = mode.lower()
     if mode not in enabled_modes:
         raise Exception("Invalid Mode. Valid Modes are {}".format(enabled_modes))
@@ -29,6 +29,7 @@ if __name__ == "__main__":
                 print(network.get_system_overview())
             else:
                 continue
-
+    elif mode == "timer":
+        raise Exception("Timer mode has not been implemented, yet!")
 
     
