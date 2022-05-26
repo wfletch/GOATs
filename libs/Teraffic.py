@@ -1,7 +1,5 @@
 import json
 from collections import defaultdict
-from ossaudiodev import control_names
-import queue
 import random
 class Network():
     """
@@ -49,9 +47,17 @@ class Network():
         print("Network Created")
     
     def tick(self):
-        for node in self.nodes:
+        order = list(self.nodes.keys())
+        random.shuffle(order)
+        for node_id in order:
+            node = self.nodes[node_id]
             node.tick()
         #TODO: Output Snapshot 
+    def create_snapshot(self):
+        raise Exception("Not implemented")
+        #TODO: Create Snapshot
+        # 1. Get State of system
+        # 2. Save as output json
 class Node():
     def __init__(self, id):
         self.inbound_edges_id_to_edge = defaultdict(lambda: None)
@@ -64,7 +70,7 @@ class Node():
     def add_outbound(self, edge):
         self.outbound_edges_id_to_edge[edge.get_ID()] = edge
     def tick(self):
-        order = self.inbound_edges_id_to_edge.keys()
+        order = list(self.inbound_edges_id_to_edge.keys())
         random.shuffle(order)
         for edge_id in order:
             edge = self.inbound_edges_id_to_edge[edge_id]
@@ -88,8 +94,8 @@ class Node():
             else:
                 edge.return_car_to_head(car)
                 continue
-        # TODO: Think long and hard about tick order
-        edge.tick()
+            # TODO: Think long and hard about tick order
+            edge.tick()
 
 
 
