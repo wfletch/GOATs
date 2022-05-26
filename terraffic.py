@@ -19,4 +19,15 @@ if __name__ == "__main__":
             ticks = 1
         for _ in range(ticks):
             network.tick()
+    elif mode == "manual":
+        while True:
+            user_input = input("Continue? (Y/N):\t")
+            if user_input.upper() == "N":
+                break
+            if user_input.upper() == "Y":
+                network.tick()
+            else:
+                continue
+
+
     
