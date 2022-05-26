@@ -89,6 +89,8 @@ class Edge():
         else:
             # Well, we don't have any space it seems.
             pass
-        pass
+        # TODO: Check if a car has moved into it's required position!
+        for car in self.queue:
+            pass
 class Car():
     pass
