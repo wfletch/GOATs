@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+import queue
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
@@ -72,6 +73,16 @@ class Edge():
         return len(self.queue)
     def get_ID(self):
         return self.id
+    def has_space_for_new_car(self):
+        return self.queue[0] == None and self.incoming_car == None
+    def add_new_car(self, car):
+        self.incoming_car = car
+    def has_car_waiting_to_leave(self):
+        return self.queue[-1] != None
+    def pop_car_waiting_leave(self):
+        car = queue[-1]
+        queue[-1] = None
+        return car
     def tick(self):
         # Find first instance of a None from the reverse.
         located_index = None
