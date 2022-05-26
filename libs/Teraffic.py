@@ -40,7 +40,10 @@ class Network():
                     to_node = self.nodes[edge["to"]]
                     to_node.add_inbound(new_edge)
                     self.edges[new_edge.get_ID()] = new_edge
-
+                else:
+                    raise Exception("This Edge does not have a known destination node")
+            else:
+                raise Exception("This Edge does not have a known origin node")
         print("Network Created")
         # Build Each Node
         # Build Each Edge
