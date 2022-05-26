@@ -1,5 +1,5 @@
 import json
-
+from collections import defaultdict
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
@@ -28,8 +28,8 @@ class Network():
         # Build Each Edge
 class Node():
     def __init__(self, id):
-        self.inbound_edges_id_to_edge = Collections.defa
-        self.outbound_edges = []
+        self.inbound_edges_id_to_edge = defaultdict(lambda: None)
+        self.outbound_edges = defaultdict(lambda: None)
         self.id = id
     pass
 class Edge():
