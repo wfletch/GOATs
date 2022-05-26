@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 import random
+import copy
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
@@ -50,9 +51,7 @@ class Network():
             car = Car(car["id"], car["start_edge"], car["start_position"], car["end_edge"], car["end_position"], car["path"])
             car.generate_path()
             start_edge = self.edges[car.current_edge]
-            print(start_edge)
             start_edge.place_car_at_point(car.current_position, car,force=True) # TODO, check if possible, otherwise do something
-            print (start_edge.queue)
             self.cars[car.id] = car
         print("Network Created")
 
@@ -60,7 +59,7 @@ class Network():
     def tick(self):
         self.tick_count +=1
         order = list(self.nodes.keys())
-        random.shuffle(order)
+        # random.shuffle(order)
         for node_id in order:
             node = self.nodes[node_id]
             self.completed_count += (node.tick())
@@ -86,7 +85,7 @@ class Node():
     def tick(self):
         completed_count = 0
         order = list(self.inbound_edges_id_to_edge.keys())
-        random.shuffle(order)
+        # random.shuffle(order)
         for edge_id in order:
             edge = self.inbound_edges_id_to_edge[edge_id]
             if not edge.is_active():
@@ -99,12 +98,15 @@ class Node():
                 # 2. Figure out if the target edge is valid, enabled, and has capacity
                 # 3. If so, move the car to the target edge.
                 #    If not, return the car to the edge it came from.
-                target_edge_id = car.get_next_edge()
+                target_edge_id = car.peek_next_edge()
+                print (car.id, target_edge_id)
+                print (self.id, self.outbound_edges_id_to_edge.keys())
                 target_edge = self.outbound_edges_id_to_edge[target_edge_id]
                 if target_edge == None:
                     raise Exception("Invalid Edge Selected! PANIC!")
                 if target_edge.is_active() and target_edge.has_space_for_new_car():
                     target_edge.add_new_car(car)
+                    car.pop_next_edge()
                 else:
                     edge.return_car_to_head(car)
             completed_count += edge.tick()
@@ -139,7 +141,7 @@ class Edge():
     def has_car_waiting_to_leave(self):
         return self.queue[-1] != None
     def pop_car_waiting_to_leave(self):
-        car = self.queue[-1]
+        car = copy.deepcopy(self.queue[-1])
         self.queue[-1] = None
         return car
     def return_car_to_head(self,car):
@@ -171,7 +173,7 @@ class Edge():
             # Everything before this point should be shifted
             unshift = self.queue[located_index+1::]
             shift = self.queue[0:located_index]
-            incoming = [self.incoming_car]
+            incoming = [copy.deepcopy(self.incoming_car)]
             self.incoming_car = None
             self.queue = incoming + shift + unshift
         else:
@@ -193,7 +195,11 @@ class Car():
         self.path = path
     def generate_path(self):
         self.path.reverse()
-    def get_next_edge(self):
+    def peek_next_edge(self):
+        if self.path == []:
+            raise Exception("This Car has no where to go!")
+        return self.path[-1]
+    def pop_next_edge(self):
         if self.path == []:
             raise Exception("This Car has no where to go!")
         else:

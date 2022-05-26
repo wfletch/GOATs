@@ -50,6 +50,16 @@
             "end_position": 1,
             "fungible_end_position" : 0,
             "path": [2,3]
+        },{
+            "id" : 2,
+            "start_edge": 1,
+            "start_position": 2,
+            "fungible_start_edge": false,
+            "fungible_start_position": false,
+            "end_edge": 3,
+            "end_position": 2,
+            "fungible_end_position" : 0,
+            "path": [2,3]
         }
     ]
 }
