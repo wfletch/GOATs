@@ -47,8 +47,11 @@ class Network():
             else:
                 raise Exception("This Edge does not have a known origin node")
         print("Network Created")
-        # Build Each Node
-        # Build Each Edge
+    
+    def tick(self):
+        for node in self.nodes:
+            node.tick()
+        #TODO: Output Snapshot 
 class Node():
     def __init__(self, id):
         self.inbound_edges_id_to_edge = defaultdict(lambda: None)
@@ -157,4 +160,5 @@ class Edge():
         for car in self.queue:
             pass
 class Car():
-    pass
+    def __init__(self) -> None:
+        pass
