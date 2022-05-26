@@ -73,6 +73,22 @@ class Edge():
     def get_ID(self):
         return self.id
     def tick(self):
+        # Find first instance of a None from the reverse.
+        located_index = None
+        for i in range(len(self)-1, -1, -1):
+            if self.queue[i] == None:
+                located_index = len(self) - i - 1
+                break
+        if located_index != None:
+            # We have found the None
+            # Everything before this point should be shifted
+            unshift = self.queue[located_index+1::]
+            shift = self.queue[0:located_index]
+            incoming = [self.incoming_car]
+            self.queue = incoming + shift + unshift
+        else:
+            # Well, we don't have any space it seems.
+            pass
         pass
 class Car():
     pass
