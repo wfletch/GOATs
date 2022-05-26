@@ -15,6 +15,8 @@ if __name__ == "__main__":
     print(network)
     if mode == "auto":
         ticks = int(sys.argv[3])
+        if ticks < 1:
+            ticks = 1
         for _ in range(ticks):
             network.tick()
     
