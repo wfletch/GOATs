@@ -3,9 +3,9 @@ from collections import defaultdict
 import random
 import uuid
 import copy
-from tracemalloc import start
-
-from requests import delete
+import zmq
+from  multiprocessing import Process
+from zmq.eventloop import ioloop, zmqstream
 class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
@@ -37,7 +37,7 @@ class Network():
         node_count = 0
         edge_count = 0
         for node in config["nodes"]:
-            new_node = Node(node["id"])
+            new_node = Node(node["id"], node["x"], node["y"])
             self.nodes[new_node.get_ID()] = new_node
         
         for edge in config["edges"]:
@@ -63,7 +63,9 @@ class Network():
             self.cars[car.id] = car
         print("Network Created")
         # TODO: Create Output Snapshot folder!
-    
+    def setup(self):
+        # We Want to setup a zeromq instance to push data to the visualizer!
+        ioloop.install()    
     def tick(self):
         self.tick_count +=1
         order = list(self.nodes.keys())
@@ -104,7 +106,9 @@ class Node():
         res["outbound_edge_id_list"] = list(res.pop("outbound_edges_id_to_edge", {}).keys())
         res["inbound_edge_id_list"] = list(res.pop("inbound_edges_id_to_edge", {}).keys())
         return res
-    def __init__(self, id):
+    def __init__(self, id,x,y):
+        self.x = x * 100
+        self.y = y * 100
         self.inbound_edges_id_to_edge = defaultdict(lambda: None)
         self.outbound_edges_id_to_edge = defaultdict(lambda: None)
         self.id = id
@@ -206,7 +210,6 @@ class Edge():
 
     def tick(self):
         completed_count = 0
-        print(self.id, "\t TICK: \t", self.queue)
         # Find first instance of a None from the reverse.
         located_index = None
         for i in range(len(self.queue)-1, -1, -1):
