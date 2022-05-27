@@ -1,16 +1,21 @@
 {
     "nodes": [
         {
-            "id": 0
+            "id": 0,
+            "traffic_pattern": "simple"
         },
         {
             "id": 1
+            
         },
         {
             "id": 2
         },
         {
             "id": 3
+        },
+        {
+            "id": 4
         }
     ],
     "edges": [
@@ -53,7 +58,7 @@
         },{
             "id" : 2,
             "start_edge": 1,
-            "start_position": 2,
+            "start_position": 0,
             "fungible_start_edge": false,
             "fungible_start_position": false,
             "end_edge": 3,

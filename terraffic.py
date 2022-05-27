@@ -1,5 +1,6 @@
 from libs.Teraffic import *
 import sys
+import time
 if __name__ == "__main__":
     print("Teraffic Network Simulation")
     name = sys.argv[1]
@@ -19,7 +20,10 @@ if __name__ == "__main__":
             ticks = 1
         for _ in range(ticks):
             network.tick()
+            print(network.create_snapshot())
             print(network.get_system_overview())
+            time.sleep(1)
+            network.save_snapshot()
     elif mode == "manual":
         while True:
             user_input = input("Continue? (Y/N):\t")
