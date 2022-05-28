@@ -5,7 +5,7 @@ if __name__ == "__main__":
     print("Teraffic Network Simulation")
     name = sys.argv[1]
     mode = sys.argv[2]
-    enabled_modes = ["manual", "auto", "timer"]
+    enabled_modes = ["manual", "auto", "end"]
     mode = mode.lower()
     if mode not in enabled_modes:
         raise Exception("Invalid Mode. Valid Modes are {}".format(enabled_modes))
@@ -14,27 +14,31 @@ if __name__ == "__main__":
     print("Building: {} with Mode: {}".format(name, mode))
     network = Network(name)
     print(network)
+    def run_simulation():
+        network.tick()
+        network.create_snapshot()
+        network.save_snapshot()
+
     if mode == "auto":
         ticks = int(sys.argv[3])
         if ticks < 1:
             ticks = 1
         for _ in range(ticks):
-            network.tick()
-            print(network.create_snapshot())
-            print(network.get_system_overview())
+            run_simulation()
             time.sleep(1)
-            network.save_snapshot()
     elif mode == "manual":
         while True:
             user_input = input("Continue? (Y/N):\t")
             if user_input.upper() == "N":
                 break
             if user_input.upper() == "Y":
-                network.tick()
-                print(network.get_system_overview())
+                run_simulation()
             else:
                 continue
-    elif mode == "timer":
-        raise Exception("Timer mode has not been implemented, yet!")
-
-    
+    elif mode == "end":
+        while True:
+            run_simulation()
+            if not network.has_changed():
+                print(network.get_system_overview())
+                break
+            time.sleep(1)

@@ -1,58 +1,246 @@
 {
     "nodes": [
         {
-            "id": 0,
-            "traffic_pattern": "simple",
-            "x" : 0,
-            "y" : 4,
-            "origin_node" : true
-        },
-        {
             "id": 1,
             "x": 0,
             "y": 0
             
-        },
+        }, 
         {
             "id": 2,
             "x": 1,
-            "y": 1
+            "y": 0
+            
         },
         {
             "id": 3,
-            "x": 1,
-            "y": 0,
-            "hidden" : true
+            "x": 2,
+            "y": 0
         },
         {
             "id": 4,
             "x": 3,
             "y": 0
+        },
+        {
+            "id": 5,
+            "x": 0,
+            "y": 1
+        },{
+            "id": 6,
+            "x": 1,
+            "y": 1
+            
+        },{
+            "id": 7,
+            "x": 3,
+            "y": 1
+            
+        },{
+            "id": 8,
+            "x": 1,
+            "y": 2
+            
+        },{
+            "id": 9,
+            "x": 2,
+            "y": 2
+            
+        },{
+            "id": 10,
+            "x": 3,
+            "y": 2
+            
+        },{
+            "id": 11,
+            "x": 1,
+            "y": 3
+            
+        },{
+            "id": 12,
+            "x": 2,
+            "y": 3
+            
+        },{
+            "id": 13,
+            "x": 3,
+            "y": 3
+            
+        },{
+            "id": 14,
+            "x": 1,
+            "y": 4
+            
+        },{
+            "id": 15,
+            "x": 3,
+            "y": 4
+            
+        },{
+            "id": 16,
+            "x": 0,
+            "y": 5
+            
+        },{
+            "id": 17,
+            "x": 1,
+            "y": 5
+            
+        },{
+            "id": 18,
+            "x": 2,
+            "y": 5
+            
+        },{
+            "id": 19,
+            "x": 3,
+            "y": 5
+            
+        },{
+            "id": 20,
+            "x": 0,
+            "y": 4
+            
         }
     ],
     "edges": [
         {
             "id": 1,
-            "from": 0,
-            "to": 1,
-            "capacity": 5
+            "from": 1,
+            "to": 2,
+            "capacity": 3
         },
         {
             "id": 2,
-            "from": 1,
-            "to": 2,
-            "capacity": 5
+            "from": 2,
+            "to": 3,
+            "capacity": 3
         },
         {
             "id": 3,
-            "from": 2,
-            "to": 3,
-            "capacity": 5
+            "from": 3,
+            "to": 4,
+            "capacity": 3
         },
         {
             "id":4,
-            "from": 1,
-            "to": 3,
+            "from": 6,
+            "to": 1,
+            "capacity": 3
+        },{
+            "id":5,
+            "from": 5,
+            "to": 2,
+            "capacity": 3
+        },{
+            "id":4,
+            "from": 6,
+            "to": 1,
+            "capacity": 3
+        },{
+            "id":4,
+            "from": 6,
+            "to": 1,
+            "capacity": 3
+        },{
+            "id":6,
+            "from": 2,
+            "to": 6,
+            "capacity": 3
+        },{
+            "id":7,
+            "from": 4,
+            "to": 7,
+            "capacity": 3
+        },{
+            "id":8,
+            "from": 8,
+            "to": 5,
+            "capacity": 3
+        },{
+            "id":9,
+            "from": 6,
+            "to": 8,
+            "capacity": 3
+        },{
+            "id":10,
+            "from": 9,
+            "to": 7,
+            "capacity": 3
+        },{
+            "id":11,
+            "from": 7,
+            "to": 10,
+            "capacity": 3
+        },{
+            "id":12,
+            "from": 8,
+            "to": 9,
+            "capacity": 3
+        },{
+            "id":13,
+            "from": 10,
+            "to": 9,
+            "capacity": 3
+        },{
+            "id":14,
+            "from": 11,
+            "to": 8,
+            "capacity": 3
+        },{
+            "id":15,
+            "from": 9,
+            "to": 12,
+            "capacity": 3
+        },{
+            "id":16,
+            "from": 10,
+            "to": 13,
+            "capacity": 3
+        },{
+            "id":17,
+            "from": 11,
+            "to": 12,
+            "capacity": 3
+        },{
+            "id":18,
+            "from": 14,
+            "to": 11,
+            "capacity": 3
+        },{
+            "id":19,
+            "from": 13,
+            "to": 15,
+            "capacity": 3
+        },{
+            "id":20,
+            "from": 17,
+            "to": 14,
+            "capacity": 3
+        },{
+            "id":21,
+            "from": 15,
+            "to": 19,
+            "capacity": 3
+        },{
+            "id":22,
+            "from": 16,
+            "to": 17,
+            "capacity": 3
+        },{
+            "id":23,
+            "from": 18,
+            "to": 17,
+            "capacity": 3
+        },{
+            "id":24,
+            "from": 19,
+            "to": 18,
+            "capacity": 3
+        },{
+            "id":25,
+            "from": 20,
+            "to": 16,
             "capacity": 3
         }
     ],
@@ -63,20 +251,20 @@
             "start_position": 1,
             "fungible_start_edge": false,
             "fungible_start_position": false,
-            "end_edge": 3,
+            "end_edge": 12,
             "end_position": 1,
             "fungible_end_position" : 0,
-            "path": [2,3]
+            "path": [2,3,7,11,13,15,17,14,12]
         },{
             "id" : 2,
-            "start_edge": 1,
+            "start_edge": 21,
             "start_position": 0,
             "fungible_start_edge": false,
             "fungible_start_position": false,
-            "end_edge": 3,
+            "end_edge": 5,
             "end_position": 2,
             "fungible_end_position" : 0,
-            "path": [2,3]
+            "path": [24,23,20,18,14,8,5]
         }
     ]
 }
