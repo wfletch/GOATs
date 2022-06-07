@@ -9,110 +9,130 @@ class Network():
     """
     Global Network Object. Creates a graph from a supplied json file
     Allows the addition of new road/intersections (Edge/Vertex) and car objects on demand.
+    All Control Logic passes via this node.
     """
 
     def __init__(self, name) -> None:
-        self.id = uuid.uuid4()
+        self.id = uuid.uuid4()  # Creates a random UUID for the node
         self.edges = defaultdict(lambda: None)
         self.nodes = defaultdict(lambda: None)
         self.cars = defaultdict(lambda: None)
+
+        # Track state of the Network.
         self.no_new_changes = False
         self.tick_count = 0
         self.completed_count = 0
-        # TODO: Store previous state to determine if we are in deadlock or not!
+
+        # Store Snapshots of the previous and current state
         self.previous_state = {}
         self.current_snapshot = {}
         print("USING: " + name + ".json as configuration file")
         config = None
         config_file = None
+        # Open up desired config
         try:
             config_file = open('./configs/' + name + '.json')
             # TODO: Fully qualified name of the file we are loading. Not relative paths.
         except:
             raise Exception("Config Not Found!")
         try:
+            # Load the config as a python dictionary. Then close
             config = json.load(config_file)
             config_file.close()
         except:
             raise Exception("Malformed Config")
 
+        # Count Edges and nodes. not used.
         node_count = 0
         edge_count = 0
+
+        # Create the Nodes
         for node in config["nodes"]:
             new_node = Node(node["id"], node["x"], node["y"])
             self.nodes[new_node.get_ID()] = new_node
 
+        # Create the Edges
         for edge in config["edges"]:
             # Make sure the edges start and end node exist
             if self.nodes[edge["from"]]:
                 if self.nodes[edge["to"]]:
                     new_edge = Edge(edge["id"], edge["from"],
                                     edge["to"], edge["capacity"])
+                    # stitch the edges to the rquired nodes
                     from_node = self.nodes[edge["from"]]
                     from_node.add_outbound(new_edge)
                     to_node = self.nodes[edge["to"]]
                     to_node.add_inbound(new_edge)
                     self.edges[new_edge.get_ID()] = new_edge
                 else:
-                    raise Exception(
-                        "This Edge does not have a known destination node")
+                    raise Exception("This Edge does not have a known destination node")
             else:
                 raise Exception("This Edge does not have a known origin node")
+        
+        # Build each car object
         for car in config["cars"]:
             car = Car(car["id"], car["start_edge"], car["start_position"],
                       car["end_edge"], car["end_position"], car["path"])
             car.generate_path()
             start_edge = self.edges[car.current_edge]
             if not start_edge.place_car_at_point(car.current_position, car):
+                # Die if we fail for whatever reason.
                 raise Exception(
                     "We failed to place a pre-defined car!!!! Check Config!. Car_ID: ", car.id)
             self.cars[car.id] = car
         print("Network Created")
-        # TODO: Create Output Snapshot folder!
 
     def setup(self):
+        # DO NOT RUN!!!
         # We Want to setup a zeromq instance to push data to the visualizer!
+        # This is for veresion 1,000.000
         ioloop.install()
 
     def tick(self):
+        # Tick. On each tick the number of completed cars is returned to the caller.
         self.tick_count += 1
         order = list(self.nodes.keys())
         # random.shuffle(order)
         for node_id in order:
             node = self.nodes[node_id]
+            # For each 1 network tick, trigger Node ticks
             self.completed_count += (node.tick())
-        # TODO: Gather snapshot of system
-        # TODO: Output Snapshot to command line
-        # TODO: Check if snapshot is different from previous snapshot (Deadlock! - Can add HEAVY load to system)
-        # TODO: Implement deltas instead of snapshots!
 
     def create_snapshot(self):
-        # 1. Get State of system
+        # 1. Get State of system and flatten all objects
         # 2. Save as output json
         cars_serialized = []
         nodes_serialized = []
         edges_serialized = []
         self.previous_state = self.current_snapshot
+        # Get the snapshots for each Node, and Edge
         for node_key in list(self.nodes.keys()):
             node = self.nodes[node_key]
             nodes_serialized.append(node.get_snapshot())
         for edge_key in list(self.edges.keys()):
             edge = self.edges[edge_key]
             edges_serialized.append(edge.get_snapshot())
+        # TODO: Materilize/Flatten Car objects
         self.current_snapshot = {
             "nodes": nodes_serialized, "edges": edges_serialized}
+        # Check if the state has changed. (This is an expensive method)
+        # TODO: Store change as deltas.
         if self.current_snapshot == self.previous_state:
             self.no_new_changes = True
         return self.current_snapshot
 
     def save_snapshot(self):
+        # Save snapshot to a pre-determined location
+        # TODO: Better file management
         with open('/Users/fletch/Programming/git_tree/wfletch/teraffic_visualizer-/node-ex-website/snapshots/snapshot.json', 'w') as fp:
             json.dump(self.current_snapshot, fp)
         pass
 
     def get_system_overview(self):
+        """Return data about the system"""
         return {"Tick": self.tick_count, "Completed Count": self.completed_count}
     def has_changed(self):
+        """Return True if the system has changed in the last tick, else False."""
         return not self.no_new_changes
 
 class Node():
@@ -125,8 +145,9 @@ class Node():
         return res
 
     def __init__(self, id, x, y):
-        self.x = x * 100
+        self.x = x * 100 # These weights are for the visualizer
         self.y = y * 100
+        # TODO: Make weights agnostic! (<-- seriously!!!!)
         self.inbound_edges_id_to_edge = defaultdict(lambda: None)
         self.outbound_edges_id_to_edge = defaultdict(lambda: None)
         self.id = id
@@ -141,6 +162,13 @@ class Node():
         self.outbound_edges_id_to_edge[edge.get_ID()] = edge
 
     def tick(self):
+        """
+        Node Tick
+        
+        Iterate through each in-bound Edge and 
+        1) check if they have cars waiting to leave.
+        2) activate a tick on them if they are enabled.
+        """
         completed_count = 0
         order = list(self.inbound_edges_id_to_edge.keys())
         # random.shuffle(order)
@@ -149,8 +177,7 @@ class Node():
             if not edge.is_active():
                 continue
             if edge.has_car_waiting_to_leave():
-                car = edge.pop_car_waiting_to_leave()
-                # REMEMBER if you can't place the car, you must return it to the edge
+                car = edge.pop_car_waiting_to_leave() # REMEMBER if you can't place the car, you must return it to the edge
                 # Process
                 # 1. Figure out car's next target edge
                 # 2. Figure out if the target edge is valid, enabled, and has capacity
@@ -161,18 +188,27 @@ class Node():
                 if target_edge == None:
                     raise Exception("Invalid Edge Selected! PANIC!")
                 if target_edge.is_active() and target_edge.has_space_for_new_car():
+                    # We have already checked to see if there is space on the target edge
                     target_edge.add_new_car(car)
-                    car.pop_next_edge()
+                    car.pop_next_edge() # Car's destination edges are stored as a stack. Remove the point we have just moved to!
                 else:
+                    # Return car to edge if we are unable to place it
                     edge.return_car_to_head(car)
             completed_count += edge.tick()
         return completed_count
 
 
 class Edge():
+    """
+    Edge
+
+    Carries a select number of cars on it. Handles the movement of all contianed cars using it's tick function
+    TODO: Actually learn how to write pydocs.
+    """
     def get_snapshot(self):
+        # Generate a JSON representation of the object
         res = copy.deepcopy(self.__dict__)  # EXPENSIVE!
-        queue_to_process = res.pop("queue", [])
+        queue_to_process = res.pop("queue", []) 
 
         res["from"] = res.pop("from_node", None)
         res["to"] = res.pop("to_node", None)
