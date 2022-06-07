@@ -207,17 +207,28 @@ class Edge():
     """
     def get_snapshot(self):
         # Generate a JSON representation of the object
+        # Process:
+        # 1. Copy the current dictionary represenation of the edge
+        # 2. Flatten all references to other objects
+
+        # Copy the current representation as a dict
         res = copy.deepcopy(self.__dict__)  # EXPENSIVE!
+
+        # Remove the queue to process.
         queue_to_process = res.pop("queue", []) 
 
-        res["from"] = res.pop("from_node", None)
-        res["to"] = res.pop("to_node", None)
+        # Process the queue (Flatten each car object)
         for index, element in enumerate(queue_to_process):
             if element == None:
                 continue
                 # All Good, No Problem
             else:
+                # Instead of contianing a pointer to the car object, just hold the cars ID
                 queue_to_process[index] = queue_to_process[index].id
+                # TODO: Fleshen/Flatten/Resolve the car object more!
+        res["from"] = res.pop("from_node", None)
+        res["to"] = res.pop("to_node", None)
+        # reassign the queue
         res["queue"] = queue_to_process
         # TODO: This should all be shifted to the Front End! This is not the job of the back end.
         res["width"] = sum([entry != None for entry in self.queue])
@@ -262,6 +273,7 @@ class Edge():
         return self.queue[-1] != None
 
     def pop_car_waiting_to_leave(self):
+        # TODO: Question if we need a deepcopy or not.
         car = copy.deepcopy(self.queue[-1])
         self.queue[-1] = None
         return car
@@ -270,7 +282,7 @@ class Edge():
         self.place_car_at_point(len(self.queue)-1, car, force=True)
 
     def place_car_at_point(self, location, car, force=False):
-        print(location)
+        """Specify a location to place the car at. Force=True will overwrite whatever was there"""
         if location > len(self.queue):
             return False
         elif self.queue[location] != None:
@@ -284,7 +296,8 @@ class Edge():
 
     def tick(self):
         completed_count = 0
-        # Find first instance of a None from the reverse.
+        # This uses a 3 queue splitting technique to shift all cars up
+        # 1. Find first instance of a None from the reverse.
         located_index = None
         for i in range(len(self.queue)-1, -1, -1):
             if self.queue[i] == None:
@@ -292,7 +305,7 @@ class Edge():
                 break
         if located_index != None:
             # We have found the None
-            # Everything before this point should be shifted
+            # 2. Everything before this point should be shifted
             unshift = self.queue[located_index+1::]
             shift = self.queue[0:located_index]
             incoming = [copy.deepcopy(self.incoming_car)]
@@ -306,7 +319,7 @@ class Edge():
             if car != None and self.id == car.end_edge and i == car.end_position:
                 self.queue[i] = None
                 completed_count += 1
-        return completed_count
+        return completed_count # This value bubbles up to the calling object (Node) which bubbles the result up to the Network.
 
 
 class Car():
